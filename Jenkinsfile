@@ -14,17 +14,17 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'mvn clean package'
+        sh 'mvn clean package -DskipTests=true'
       }
     }
     stage('Test') {
       steps {
-        sh 'ls'
+        sh 'mvn test'
       }
     }
     stage('Deploy') {
       steps {
-        deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'http://3.38.200.148:8080/')], contextPath: null, war: 'maven_project/target'
+        deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'http://3.38.200.148:8080/')], contextPath: null, war: 'target/hello-world.war'
       }
     }
   }
