@@ -49,7 +49,7 @@ pipeline {
         docker { image 'docker:dind' }
       }
       steps {
-        sh 'docker -H tcp://13.125.142.111:2375 container run --detach --name mytomcat -p 80:8080 rkddkwlrhdiddl/hellotomcat:v1'
+        sh 'docker -H tcp://172.31.30.114:2375 container run --detach --name mytomcat -p 80:8080 rkddkwlrhdiddl/hellotomcat:v1'
       }
     }
   }
