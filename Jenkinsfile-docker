@@ -33,14 +33,14 @@ pipeline {
     stage('Tag Docker Image') {
       agent any
       steps {
-        sh 'docker image tag hellotomcat hellotomcat:v1'
+        sh 'docker image tag hellotomcat rkddkwlrhdiddl/hellotomcat:v1'
       }
     }
     stage('Publish Docker Image') {
       agent any
       steps {
         withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
-          sh 'docker login -u rkddkwlrhdiddl'
+          sh 'docker image push rkddkwlrhdiddl/hellotomcat:v1'
         }
       }
     }
