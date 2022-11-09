@@ -1,0 +1,59 @@
+pipeline {
+  agent none
+
+  stages {
+    stage('Checkout') {
+      agent any
+      steps {
+        git branch: 'main', url: 'https://github.com/yoowonsuk/source-maven-java-spring-hello-webapp'
+      }
+    }
+    stage('Build') {
+      agent {
+        docker { image 'maven:3-openjdk-8' }
+      }
+      steps {
+        sh 'mvn clean package -DskipTests=true'
+      }
+    }
+    stage('Test') {
+      agent {
+        docker { image 'maven:3-openjdk-8' }
+      }
+      steps {
+        sh 'mvn test'
+      }
+    }
+    stage('Build Docker Image') {
+      agent any
+      steps {
+        sh 'docker image build -t hellotomcat1 .'
+      }
+    }
+    stage('Tag Docker Image') {
+      agent any
+      steps {
+        sh 'docker image tag hellotomcat1 rkddkwlrhdiddl/hellotomcat1:v1'
+      }
+    }
+    stage('Publish Docker Image') {
+      agent any
+      steps {
+        withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
+          sh 'docker image push rkddkwlrhdiddl/hellotomcat1:v1'
+        }
+      }
+    }
+    stage('Run Docker Container') {
+      agent {
+        docker { 
+          image 'rkddkwlrhdiddl/jenkins-ansible'
+          args '-u 0:0 -e DOCKER_HOST=tcp://172.31.30.114:2375'
+        }
+      }
+      steps {
+        ansiblePlaybook(playbook: 'docker-container-deploy.yaml')
+      }
+    }
+  }
+}
