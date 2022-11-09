@@ -7,5 +7,5 @@
       name: myweb
       image: "rkddkwlrhdiddl/hellotomcat1:v1
       state: started
-      ports:
+      port:
       - "80:8080"
